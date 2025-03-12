@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        div.data {
+            background-color:darkgreen;
+            color:white
+        }
+        div.watering {
+            background-color:lightblue;
+            color:darkblue
+        }
+    </style>
+    <script> 
+    // JavaScript for handling manual watering control buttons
+    async function controlWatering(action) {
+        const response = await fetch("", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ action: action }) 
+        });
+        const data = await response.json();
+        alert(data.message || data.error);
+    }
+
+    </script>
+</head>
+<body>
+    <div class = "data">
+        <h1>Smart Garden Dashboard</h1>
+        <h2>Current Weather</h2>
+        <table>
+            <tr>
+                <th><strong>Timestamp:  </strong></th>
+                <td> {{latest_hourly.timestamp}} </td>
+            </tr>
+            <tr>
+                <th><strong>Temperature °C:  </strong></th>
+                <td> {{latest_hourly.temperature_2m}} </td>
+            </tr>
+            <tr>
+                <th><strong>Soil Moisture m³/m³:  </strong></th>
+                <td> {{latest_hourly.soil_moisture_1_to_3cm}} </td>
+            </tr>
+            <tr>
+                <th><strong>Precipitation last 24h (mm):  </strong></th>
+                <td> {{latest_daily.precipitation_sum}} </td>
+            </tr>
+            <tr>
+                <th><strong>Precipitation Probability %:  </strong></th>
+                <td> {{latest_hourly.precipitation_probability}} </td>
+            </tr>
+            <tr>
+                <th><strong>Relative Humidity %:  </strong></th>
+                <td> {{latest_hourly.relative_humidity_2m}} </td>
+            </tr>
+        </table>
+    </div>
+    <div class="watering">
+        <table>
+            <tr>
+                <th><strong><h2>Watering Decision: </h2></strong></th>
+                <td><h2>{{watering_decision}} </h2></td>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <h2>Manual Control</h1>
+            <button onclick="controlWatering('start')">Start Watering</button>
+            <button onclick="controlWatering('stop')">Stop Watering</button>
+    </div>
+    
+</body>
+</html>
