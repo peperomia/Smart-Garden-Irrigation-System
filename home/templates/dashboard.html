@@ -13,25 +13,49 @@
             background-color:lightblue;
             color:darkblue
         }
-    </style>
-    <script> 
-    // JavaScript for handling manual watering control buttons
-    async function controlWatering(action) {
-        const response = await fetch("", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": "{{ csrf_token }}"
-            },
-            body: JSON.stringify({ action: action }) 
-        });
-        const data = await response.json();
-        alert(data.message || data.error);
-    }
+        #start {
+            background-color: rgb(165, 210, 165);
+            color: black;
+            width: 200px;
+            height: 50px;
+            border-radius: 10px;
+        }
+        #stop {
+            background-color: rgb(183, 131, 131);
+            color: black;
+            width: 200px;
+            height: 50px;
+            border-radius: 10px;
 
+        }
+    </style>
+    <script>
+        async function controlWatering(action) {
+            const url = "{% url 'dashboard' %}";
+            const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken
+                },
+                body: JSON.stringify({ action: action }) 
+            });
+    
+            const data = await response.json();
+            if (data.message) {
+                alert(data.message);
+            } else {
+                alert("Greška: " + (data.error || "Nepoznata greška"));
+            }
+        }
     </script>
 </head>
 <body>
+    <form method="post">
+        {% csrf_token %}
+    </form>
     <div class = "data">
         <h1>Smart Garden Dashboard</h1>
         <h2>Current Weather</h2>
@@ -72,8 +96,8 @@
     </div>
     <div>
         <h2>Manual Control</h1>
-            <button onclick="controlWatering('start')">Start Watering</button>
-            <button onclick="controlWatering('stop')">Stop Watering</button>
+            <button id="start" onclick="controlWatering('start')">Start Watering</button>
+            <button id= "stop" onclick="controlWatering('stop')">Stop Watering</button>
     </div>
     
 </body>
